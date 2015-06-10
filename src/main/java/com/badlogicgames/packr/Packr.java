@@ -117,7 +117,9 @@ public class Packr {
 		}
 		FileUtils.writeByteArrayToFile(new File(target, config.executable + extension), exe);
 		new File(target, config.executable + extension).setExecutable(true);
-		FileUtils.copyFile(new File(config.jar), new File(target, new File(config.jar).getName()));
+                try {
+                    FileUtils.copyFile(new File(config.jar), new File(target, new File(config.jar).getName()));
+                } catch( Exception e ) {}
 		writeConfig(config, new File(target, "config.json"));
 		
 		// add JRE from local or remote zip file
@@ -163,7 +165,8 @@ public class Packr {
 	private void writeConfig(Config config, File file) throws IOException {
 		StringBuilder builder = new StringBuilder();
 		builder.append("{\n");
-		builder.append("   \"jar\": \"" + new File(config.jar).getName() + "\",\n");
+		File fJar = new File(config.jar);
+		builder.append( "   \"jar\": \"" ).append( fJar.exists() ? new File( config.jar ).getName() : config.jar ).append( "\",\n" );
 		builder.append("   \"mainClass\": \"" + config.mainClass + "\",\n");
 		builder.append("   \"vmArgs\": [\n");
 		for(int i = 0; i < config.vmArgs.size(); i++) {
